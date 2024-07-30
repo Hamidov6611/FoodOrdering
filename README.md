@@ -1,4 +1,4 @@
-# FoodOrdering App
+# FoodOrdering App <span>(mobile app)</span>
 
 ## Overview
 FoodOrdering is a mobile application that allows users to order burgers and other food items. This app is built using React Native and Expo, and it is integrated with Supabase for the backend.
