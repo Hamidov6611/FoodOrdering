@@ -17,7 +17,7 @@ FoodOrdering is a mobile application that allows users to order burgers and othe
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/FoodOrdering.git
+    git clone https://github.com/Hamidov6611/FoodOrdering.git
     ```
 2. Navigate to the project directory:
     ```bash
@@ -45,5 +45,5 @@ Contributions are welcome! Please fork the repository and create a pull request 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
-If you have any questions or feedback, feel free to contact me at [your-email@example.com].
+If you have any questions or feedback, feel free to contact me at [dilmuroddelitot@gmail.com].
 
