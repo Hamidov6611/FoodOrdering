@@ -48,5 +48,6 @@ const styles = StyleSheet.create({
     price: {
         color: Colors.light.tint,
         fontWeight: '600',
+        marginTop: 'auto',
     },
 });

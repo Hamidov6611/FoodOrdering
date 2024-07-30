@@ -54,8 +54,11 @@ function RootLayoutNav() {
       <CartProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="cart" options={{ presentation: 'modal' }} />
-        </Stack>
+          <Stack.Screen
+            name="cart"
+            options={{ presentation: 'modal', animation:'slide_from_bottom', animationDuration: 300 }}
+          />
+          </Stack>
       </CartProvider>
     </ThemeProvider>
   );
