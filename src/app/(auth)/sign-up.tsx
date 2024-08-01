@@ -3,17 +3,28 @@ import React, { useState } from 'react';
 import Button from '../../components/Button';
 import Colors from '../../constants/Colors';
 import { Link, Stack } from 'expo-router';
+import { supabase } from '@/src/lib/supabase';
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const signUpWithEmail = async () => {
+    try {
+      setLoading(true);
+      const { error, data } = await supabase.auth.signUp({ email, password });
+      if (error) Alert.alert(error.message);
+      console.log(data)
+      setLoading(false);
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: 'Sign up' }} />
-
       <Text style={styles.label}>Email</Text>
       <TextInput
         value={email}
@@ -32,8 +43,9 @@ const SignUpScreen = () => {
       />
 
       <Button
+        onPress={signUpWithEmail}
         disabled={loading}
-        text={'Create account'}
+        text={loading ? 'Creating account...' : 'Create account'}
       />
       <Link href="/sign-in" style={styles.textButton}>
         Sign in
