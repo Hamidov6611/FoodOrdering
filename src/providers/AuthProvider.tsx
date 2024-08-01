@@ -43,12 +43,13 @@ export default function AuthProvider({ children }: PropsWithChildren) {
             setLoading(false);
         };
 
+        console.log(profile)
+
         fetchSession();
         supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
         });
 
-        console.log(session && "Mahbuba")
     }, []);
 
     return (
