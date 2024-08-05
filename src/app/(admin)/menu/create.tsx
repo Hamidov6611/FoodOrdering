@@ -6,7 +6,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 
 import React, { useEffect, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker';
-import { useInsertProduct, useProduct, useUpdateProduct } from '@/src/api/products';
+import { useDeleteProduct, useInsertProduct, useProduct, useUpdateProduct } from '@/src/api/products';
 
 const CreateProductScreen = () => {
     const [name, setName] = useState('')
@@ -22,6 +22,7 @@ const CreateProductScreen = () => {
 
     const { mutate: insertProduct } = useInsertProduct()
     const { mutate: updateProduct } = useUpdateProduct()
+    const { mutate: deleteProduct } = useDeleteProduct()
     const { data: updatingProduct } = useProduct(parseInt(id as string))
 
     const [errors, setErrors] = useState('')
@@ -123,7 +124,17 @@ const CreateProductScreen = () => {
         ])
     }
 
-    const onDelete = () => { }
+    const onDelete = () => {
+        deleteProduct(parseInt(id as string), {
+            onSuccess: () => {
+                Alert.alert("Success", "Product deleted successfully")
+                router.back()
+            },
+            onError: () => {
+                Alert.alert("Error", "Failed to delete product")
+            }
+        })
+     }
 
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
