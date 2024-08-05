@@ -4,23 +4,35 @@ import { defaultPizzaImage } from '@/src/types'
 import Colors from '@/src/constants/Colors';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker';
-import { useInsertProduct } from '@/src/api/products';
+import { useInsertProduct, useProduct, useUpdateProduct } from '@/src/api/products';
 
 const CreateProductScreen = () => {
     const [name, setName] = useState('')
     const [price, setPrice] = useState('')
     const [image, setImage] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [loading2, setLoading2] = useState(false);
 
     const { id } = useLocalSearchParams()
     const isUpdating = !!id
 
     const router = useRouter()
 
-    const { mutate: insertProduct, isPending } = useInsertProduct()
+    const { mutate: insertProduct } = useInsertProduct()
+    const { mutate: updateProduct } = useUpdateProduct()
+    const { data: updatingProduct } = useProduct(parseInt(id as string))
 
     const [errors, setErrors] = useState('')
+
+    useEffect(() => {
+        if (updatingProduct) {
+            setName(updatingProduct.name)
+            setPrice(updatingProduct.price.toString())
+            setImage(updatingProduct.image)
+        }
+    }, [updateProduct])
 
     const resetFields = () => {
         setName('')
@@ -49,7 +61,6 @@ const CreateProductScreen = () => {
 
     const onSubmit = () => {
         if (isUpdating) {
-            // update
             onUpdateCreate()
         } else {
             onCreate()
@@ -61,9 +72,21 @@ const CreateProductScreen = () => {
             return;
         }
 
-        // save to db
+        setLoading2(true)
 
-        resetFields()
+        updateProduct({ id: parseInt(id as string), name, price: parseFloat(price), image }, {
+            onSuccess: () => {
+                Alert.alert("Success", "Product updated successfully")
+                router.back()
+                setLoading2(false)
+                resetFields()
+            },
+            onError: () => {
+                Alert.alert("Error", "Failed to update product")
+                setLoading2(false)
+            }
+        })
+
     }
 
     const onCreate = () => {
@@ -71,19 +94,24 @@ const CreateProductScreen = () => {
             return;
         }
 
-        // save to db
+        setLoading(true)
 
         insertProduct({ name, price: parseFloat(price), image }, {
             onSuccess: () => {
                 Alert.alert("Success", "Product created successfully")
                 router.back()
+                setLoading(false)
                 resetFields()
+            },
+            onError: () => {
+                Alert.alert("Error", "Failed to create product")
+                setLoading(false)
             }
         })
 
     }
 
-    const confirmDelete = () => { 
+    const confirmDelete = () => {
         Alert.alert("Confirm", "Are you sure you want to delete this product?", [
             {
                 text: "Cancel",
@@ -123,6 +151,7 @@ const CreateProductScreen = () => {
                 onChangeText={setName}
                 placeholder='name'
                 style={styles.input}
+                aria-disabled={loading || loading2}
             />
 
             <Text style={styles.label}>Price ($)</Text>
@@ -132,10 +161,16 @@ const CreateProductScreen = () => {
                 placeholder='9.99'
                 style={styles.input}
                 keyboardType='numeric'
+                aria-disabled={loading || loading2}
+
             />
 
             <Text style={{ color: 'red' }}>{errors}</Text>
-            <Button onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
+            <Button 
+                onPress={onSubmit} 
+                text={isUpdating ? (loading2 ? "Updating..." : "Update") : (loading ? "Creating..." : "Create")} 
+                aria-disabled={loading || loading2}
+                />
             {isUpdating && <Text onPress={confirmDelete} style={styles.deleteText}>Delete</Text>}
         </View>
     )
@@ -169,11 +204,11 @@ const styles = StyleSheet.create({
         color: Colors.light.tint,
         marginVertical: 10
     },
-    deleteText: { 
-        color: 'red', 
-        alignSelf: 'center', 
-        marginTop: 10, 
-        fontWeight: 'bold' 
+    deleteText: {
+        color: 'red',
+        alignSelf: 'center',
+        marginTop: 10,
+        fontWeight: 'bold'
     }
 })
 
