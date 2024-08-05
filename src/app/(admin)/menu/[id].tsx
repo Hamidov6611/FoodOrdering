@@ -7,30 +7,29 @@ import Button from '@/src/components/Button'
 import { useCart } from '@/src/providers/CartProvider'
 import { FontAwesome } from '@expo/vector-icons'
 import Colors from '@/src/constants/Colors'
+import { useProduct } from '@/src/api/products'
+import Loader from '@/src/components/Loader'
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']
 
 const ProductDetailsScreen = () => {
   const { id } = useLocalSearchParams()
   const { addItem } = useCart()
+  const { data: product, error, isLoading } = useProduct(Number(id))
+
 
   const router = useRouter()
 
   const [selectedSize, setSelectedSize] = useState<PizzaSize>('M')
 
-  const product = products.find((product: Product) => product.id.toString() === id)
-
-  const addToCart = () => {
-    if (!product) return
-
-    addItem(product, selectedSize)
-
-    router.push('/cart')
+  if (isLoading) {
+    return <Loader />
   }
 
-  if (!product) {
-    return <Text>Product not found</Text>
+  if (error) {
+    return <Text>Something went wrong</Text>
   }
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -38,7 +37,7 @@ const ProductDetailsScreen = () => {
       <Stack.Screen options={{
         title: 'Menu',
         headerRight: () => (
-          <Link href={` /(admin)/menu/create?id=${id}`} asChild>
+          <Link href={`/(admin)/menu/create?id=${id}`} asChild>
             <Pressable>
               {({ pressed }) => (
                 <FontAwesome

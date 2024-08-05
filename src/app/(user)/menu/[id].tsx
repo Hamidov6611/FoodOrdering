@@ -5,18 +5,21 @@ import { defaultPizzaImage, PizzaSize, Product } from '@/src/types'
 import { useState } from 'react'
 import Button from '@/src/components/Button'
 import { useCart } from '@/src/providers/CartProvider'
+import { useProduct } from '@/src/api/products'
+import Loader from '@/src/components/Loader'
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']
 
 const ProductDetailsScreen = () => {
   const { id } = useLocalSearchParams()
+
+  const { data: product, error, isLoading } = useProduct(Number(id))
+
   const { addItem } = useCart()
 
   const router = useRouter()
 
   const [selectedSize, setSelectedSize] = useState<PizzaSize>('M')
-
-  const product = products.find((product: Product) => product.id.toString() === id)
 
   const addToCart = () => {
     if (!product) return
@@ -26,8 +29,12 @@ const ProductDetailsScreen = () => {
     router.push('/cart')
   }
 
-  if (!product) {
+  if (error) {
     return <Text>Product not found</Text>
+  }
+
+  if (isLoading) {
+    return <Loader />
   }
 
   return (

@@ -2,10 +2,11 @@ import { View, Text, StyleSheet, TextInput, Image, Alert } from 'react-native'
 import Button from '@/src/components/Button'
 import { defaultPizzaImage } from '@/src/types'
 import Colors from '@/src/constants/Colors';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 
 import React, { useState } from 'react'
 import * as ImagePicker from 'expo-image-picker';
+import { useInsertProduct } from '@/src/api/products';
 
 const CreateProductScreen = () => {
     const [name, setName] = useState('')
@@ -14,6 +15,10 @@ const CreateProductScreen = () => {
 
     const { id } = useLocalSearchParams()
     const isUpdating = !!id
+
+    const router = useRouter()
+
+    const { mutate: insertProduct, isPending } = useInsertProduct()
 
     const [errors, setErrors] = useState('')
 
@@ -66,7 +71,16 @@ const CreateProductScreen = () => {
             return;
         }
 
-        resetFields()
+        // save to db
+
+        insertProduct({ name, price: parseFloat(price), image }, {
+            onSuccess: () => {
+                Alert.alert("Success", "Product created successfully")
+                router.back()
+                resetFields()
+            }
+        })
+
     }
 
     const confirmDelete = () => { 

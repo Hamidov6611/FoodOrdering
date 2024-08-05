@@ -4,12 +4,13 @@ import Button from '../components/Button';
 import { Link, Redirect } from 'expo-router';
 import { useAuth } from '../providers/AuthProvider';
 import { supabase } from '../lib/supabase';
+import Loader from '../components/Loader';
 
 const index = () => {
   const { session, loading, isAdmin } = useAuth();
 
   if (loading) {
-    return <ActivityIndicator />;
+    return <Loader />
   }
 
   if (!session) {
