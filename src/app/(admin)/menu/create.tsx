@@ -128,7 +128,7 @@ const CreateProductScreen = () => {
         deleteProduct(parseInt(id as string), {
             onSuccess: () => {
                 Alert.alert("Success", "Product deleted successfully")
-                router.back()
+                router.replace('/(admin)')
             },
             onError: () => {
                 Alert.alert("Error", "Failed to delete product")
