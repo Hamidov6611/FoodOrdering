@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, Pressable, ScrollView } from 'react-native'
+import { View, Text, Image, StyleSheet, Pressable, ScrollView, ActivityIndicator } from 'react-native'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import products from '@/assets/data/products'
 import { defaultPizzaImage, PizzaSize, Product } from '@/src/types'
@@ -39,7 +39,7 @@ const ProductDetailsScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Stack.Screen options={{ title: product?.name }} />
+      <Stack.Screen options={{ title: product?.name ? product.name : <ActivityIndicator /> }} />
 
       <Image source={{ uri: product?.image || defaultPizzaImage }} style={styles.image} />
 

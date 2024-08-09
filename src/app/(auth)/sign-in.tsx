@@ -2,20 +2,25 @@ import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Button from '../../components/Button';
 import Colors from '../../constants/Colors';
-import { Link, Stack } from 'expo-router';
+import { Link, Stack, useRouter } from 'expo-router';
 import { supabase } from '@/src/lib/supabase';
+import { useAuth } from '@/src/providers/AuthProvider';
 
 const SignInScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const { isAdmin, profile } = useAuth()
+    const router = useRouter()
 
     const signInWithEmail = async () => {
         try {
             setLoading(true);
             const { error, data } = await supabase.auth.signInWithPassword ({ email, password });
+
             if (error) Alert.alert(error.message);
-            console.log(data)
+            isAdmin ? router.push('/') : router.push('/(user)/menu');
+            console.log(profile)
             setLoading(false);
         } catch (error) {
             console.log(error)
